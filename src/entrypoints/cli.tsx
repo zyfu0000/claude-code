@@ -80,7 +80,6 @@ async function main(): Promise<void> {
     (args[0] === '--version' || args[0] === '-v' || args[0] === '-V')
   ) {
     // MACRO.VERSION is inlined at build time
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.log(`${MACRO.VERSION} (Claude Code)`)
     return
   }
@@ -101,7 +100,6 @@ async function main(): Promise<void> {
     const model = (modelIdx !== -1 && args[modelIdx + 1]) || getMainLoopModel()
     const { getSystemPrompt } = await import('../constants/prompts.js')
     const prompt = await getSystemPrompt([], model)
-    // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.log(prompt.join('\n'))
     return
   }
@@ -257,6 +255,29 @@ async function main(): Promise<void> {
     return
   }
 
+  // Fast-path for `claude autonomy ...`: state inspection/management commands
+  // do not need the full interactive CLI bootstrap. The full Commander path
+  // imports main.tsx and runs root preAction initialization before the autonomy
+  // action; under coverage/CI that leaves unrelated handles around simple
+  // state-only subprocess calls.
+  if (args[0] === 'autonomy') {
+    profileCheckpoint('cli_autonomy_path')
+    const { getAutonomyCommandText } = await import(
+      '../cli/handlers/autonomy.js'
+    )
+    const text = await getAutonomyCommandText(args.slice(1).join(' '))
+    await new Promise<void>((resolve, reject) => {
+      process.stdout.write(`${text}\n`, error => {
+        if (error) {
+          reject(error)
+          return
+        }
+        resolve()
+      })
+    })
+    process.exit(0)
+  }
+
   // Fast-path for `--bg`/`--background` shortcut → daemon bg.
   if (
     feature('BG_SESSIONS') &&
@@ -400,4 +421,4 @@ async function main(): Promise<void> {
 }
 
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
-void main()
+await main()

@@ -34,7 +34,7 @@
 | GrowthBook                  | 企业级特性开关                                                                                                               | [文档](https://ccb.agent-aura.top/docs/internals/growthbook-adapter)                                                                      |
 | /dream 记忆整理             | 自动整理和优化记忆文件                                                                                                       | [文档](https://ccb.agent-aura.top/docs/features/auto-dream)                                                                               |
 
-- 🚀 [想要启动项目](#快速开始源码版)
+- 🚀 [想要启动项目](#-快速开始源码版)
 - 🐛 [想要调试项目](#vs-code-调试)
 - 📖 [想要学习项目](#teach-me-学习项目)
 
@@ -54,6 +54,8 @@ ccb-bun # 以 bun 形态打开
 ccb update # 更新到最新版本
 CLAUDE_BRIDGE_BASE_URL=https://remote-control.claude-code-best.win/ CLAUDE_BRIDGE_OAUTH_TOKEN=test-my-key ccb --remote-control # 我们有自部署的远程控制
 ```
+
+> **安装/更新失败？** 先 `npm rm -g claude-code-best` 清理旧版本，再 `npm i -g claude-code-best@latest`。仍失败则指定版本号：`npm i -g claude-code-best@<版本号>`
 
 ## ⚡ 快速开始(源码版)
 
